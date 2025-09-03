@@ -48,13 +48,13 @@ const deleteGame = async (req, res) => {
 //Função para ALTERAR jogos
 const updateGame = async (req, res) => {
   try {
-    if(ObjectId.isValid(req.params.id)){
-      const id = req.params.id
-      const {title, year, genre, platform, price} = req.body
-      await gameService.Update(id, title, year, genre, platform, price)
-      res.sendStatus(200) // Cód 200 (OK)
+    if (ObjectId.isValid(req.params.id)) {
+      const id = req.params.id;
+      const { title, year, genre, platform, price } = req.body;
+      const game = await gameService.Update(id, title, year, genre, platform, price);
+      res.status(200).json({game}); // Cód 200 (OK)
     } else {
-      res.sendStatus(400) // Cód 400 (BAD REQUEST)
+      res.sendStatus(400); // Cód 400 (BAD REQUEST)
     }
   } catch (error) {
     console.log(error);
@@ -62,4 +62,24 @@ const updateGame = async (req, res) => {
   }
 };
 
-export default { getAllgames, createGame, deleteGame, updateGame };
+// Função de buscar um unico jogo
+const getOneGame = async (req, res) => {
+  try {
+    if (ObjectId.isValid(req.params.id)) {
+      const id = req.params.id
+      const game = await gameService.getOne(id);
+      if (!game) { // if not game
+        res.status(404).json({ error: 'O jogo nao foi encontrado.'}) // Not Found: Não encontrado
+      } else {
+        res.status(200).json({ game })
+      }
+    } else {
+      res.status(400).json({ error: 'A id enviada é invalida'}) // Bad Request: Requisição invalida
+    }
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500); // Erro interno do servidor
+  }
+};
+
+export default { getAllgames, createGame, deleteGame, updateGame, getOneGame };

@@ -41,14 +41,28 @@ class gameService {
   //Alterando registros no banco
   async Update(id, title, year, genre, platform, price) {
     try {
-      await Game.findByIdAndUpdate(id, {
-        title,
-        year,
-        genre,
-        platform,
-        price,
-      });
+      const game = await Game.findByIdAndUpdate(
+        id,
+        {
+          title,
+          year,
+          genre,
+          platform,
+          price,
+        },
+        { new: true }
+      );
       console.log(`Dados do game com id ${id} alterado com sucesso.`);
+      return game;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getOne(id) {
+    try {
+      const game = await Game.findOne({ _id: id });
+      return game;
     } catch (error) {
       console.log(error);
     }
