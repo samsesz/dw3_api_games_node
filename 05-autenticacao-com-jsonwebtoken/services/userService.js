@@ -1,6 +1,7 @@
 // Importando o model
 import User from "../models/Users.js";
 
+
 class userService {
   //Metodo para cadastrar usuario
   async Create(name, email, password) {
