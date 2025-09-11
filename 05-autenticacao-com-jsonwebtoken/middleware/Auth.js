@@ -5,9 +5,25 @@ import userController from "../controllers/userController.js";
 const Authorization = (req, res, next) => {
   const authToken = req.headers["authorization"];
   if (authToken != undefined) {
-    next();
+    //Dividindo a string do token (eliminar palavra bearer)
+    const bearer = authToken.split(" ");
+    const token = bearer[1];
+    //Validando o token
+    jwt.verify(token, userController.jwtSecret, (error, data) => {
+      if (error) {
+        res.status(401).json({ error: "token invalido" });
+        // token valido
+      } else {
+        req.token = token;
+        req.loggedUser = {
+          id: data.id,
+          email: data.email,
+        }
+        next();
+      }
+    });
   } else {
-    res.status(401).json({ error: "token invalido" });
+    res.status(401).json({ error: "Acesso não autorizado" });
   }
 };
 
